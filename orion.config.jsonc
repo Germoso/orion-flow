@@ -50,6 +50,21 @@
     "misc": "Mis tareas" // Acciones sueltas que no pertenecen a ningún proyecto.
   },
 
+  // Ubicaciones para cálculos de traslado. Cuando un itinerario implique
+  // salir de casa, Orion consulta una API de rutas (OSRM/Google Distance Matrix)
+  // para estimar cuánto tiempo toma el trayecto y agendar la salida con margen.
+  "locations": {
+    // Dirección o coordenadas de casa (ej. "Santo Domingo, DN" o
+    // "18.4861,-69.9312"). Déjalo vacío y Orion te lo preguntará antes de
+    // calcular cualquier traslado.
+    "home": "",
+    // Si es true, Orion pregunta al usuario en qué está (ubicación actual)
+    // antes de calcular un trayecto cuando no haya una origen conocido.
+    "ask_current_location": true,
+    // Minutos de margen extra que Orion añade al tiempo de traslado calculado.
+    "extra_margin_minutes": 10
+  },
+
   // Revisión semanal de la bandeja INBOX: cuándo agenda Orion el momento de
   // decidir el destino de sus items (proyecto, tarea o descartar).
   "inbox_review": {
@@ -77,6 +92,7 @@
     "compras": "plátano", // Salidas o sesiones de compras.
     "metas_y_proyectos": "uva", // Bloques de trabajo en proyectos y metas (listas PROY).
     "revision_inbox": "salvia", // Revisiones de la bandeja INBOX.
+    "habitos": "flamenco", // Hábitos recurrentes (Minoxidil, rutinas diarias, etc.).
     "default": "lavanda" // Color por defecto si el evento no encaja en ninguna categoría.
   },
 

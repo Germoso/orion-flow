@@ -137,6 +137,26 @@ function resolveColor(color?: string | null): string | undefined {
   return id;
 }
 
+const RECURRENCE_ALIASES: Record<string, string> = {
+  daily: "RRULE:FREQ=DAILY", diario: "RRULE:FREQ=DAILY", diaria: "RRULE:FREQ=DAILY", "todos los dias": "RRULE:FREQ=DAILY",
+  weekly: "RRULE:FREQ=WEEKLY", semanal: "RRULE:FREQ=WEEKLY", semanalmente: "RRULE:FREQ=WEEKLY",
+  monthly: "RRULE:FREQ=MONTHLY", mensual: "RRULE:FREQ=MONTHLY", mensualmente: "RRULE:FREQ=MONTHLY",
+  yearly: "RRULE:FREQ=YEARLY", anual: "RRULE:FREQ=YEARLY",
+};
+
+export const RECURRENCE_HELP = "Recurrencia: alias (diario, semanal, mensual, anual, daily, weekly...) o un RRULE completo tipo RRULE:FREQ=DAILY o FREQ=DAILY;BYDAY=MO,WE,FR.";
+
+function resolveRecurrence(recurrence?: string | null): string[] | undefined {
+  if (recurrence === undefined || recurrence === null || String(recurrence).trim() === "") return undefined;
+  const raw = String(recurrence).trim();
+  const friendly = RECURRENCE_ALIASES[normalizeColor(raw)];
+  if (friendly) return [friendly];
+  const upper = raw.toUpperCase();
+  if (upper.startsWith("RRULE:")) return [upper];
+  if (upper.startsWith("FREQ=")) return [`RRULE:${upper}`];
+  throw new Error(`Recurrencia no reconocida: "${recurrence}". Usa ${RECURRENCE_HELP}`);
+}
+
 function eventSummary(event: Record<string, any>) {
   return {
     id: event.id,
@@ -146,6 +166,7 @@ function eventSummary(event: Record<string, any>) {
     start: event.start,
     end: event.end,
     colorId: event.colorId,
+    recurrence: event.recurrence,
     attendees: event.attendees,
     htmlLink: event.htmlLink,
     creator: event.creator,
@@ -442,10 +463,11 @@ server.registerTool(
       attendees: z.array(z.string().email()).optional(),
       allDay: z.boolean().optional().default(false),
       color: z.string().optional().describe(`Color del evento. ${EVENT_COLOR_HELP}`),
+      recurrence: z.string().optional().describe(RECURRENCE_HELP),
       allowConflict: z.boolean().optional().default(false).describe("Solo true después de confirmar explícitamente el conflicto."),
     },
   },
-  async ({ summary, start, end, durationMinutes, calendarId, description, location, attendees, allDay, color, allowConflict }) => safe(async () => {
+  async ({ summary, start, end, durationMinutes, calendarId, description, location, attendees, allDay, color, recurrence, allowConflict }) => safe(async () => {
     if (!start) throw new Error("start es obligatorio.");
     const { calendar } = await getGoogleApis();
     const id = await defaultCalendarId(calendar, calendarId);
@@ -455,11 +477,12 @@ server.registerTool(
     const endValue = end ? DateTime.fromISO(end, { zone: timezone }) : allDay ? startValue.plus({ days: 1 }) : startValue.plus({ minutes: durationMinutes ?? 30 });
     if (!endValue.isValid || endValue <= startValue) throw new Error("end debe ser posterior a start.");
     const colorId = resolveColor(color);
+    const recurrenceRule = resolveRecurrence(recurrence);
     const conflicts = await findConflicts(calendar, id, timezone, startValue, endValue);
     if (conflicts.length && !allowConflict) return { created: false, conflict: true, calendarId: id, timezone, conflicts, message: "No se creó el evento porque se solapa con otros eventos." };
     const requestBody = allDay
-      ? { summary, description, location, colorId, start: { date: startValue.toISODate()! }, end: { date: endValue.toISODate()! }, attendees: attendees?.map((email) => ({ email })) }
-      : { summary, description, location, colorId, start: { dateTime: startValue.toISO()!, timeZone: timezone }, end: { dateTime: endValue.toISO()!, timeZone: timezone }, attendees: attendees?.map((email) => ({ email })) };
+      ? { summary, description, location, colorId, recurrence: recurrenceRule, start: { date: startValue.toISODate()! }, end: { date: endValue.toISODate()! }, attendees: attendees?.map((email) => ({ email })) }
+      : { summary, description, location, colorId, recurrence: recurrenceRule, start: { dateTime: startValue.toISO()!, timeZone: timezone }, end: { dateTime: endValue.toISO()!, timeZone: timezone }, attendees: attendees?.map((email) => ({ email })) };
     const response = await calendar.events.insert({ calendarId: id, sendUpdates: attendees?.length ? "all" : "none", requestBody });
     return { calendarId: id, timezone, event: eventSummary(response.data as Record<string, any>) };
   }),
@@ -469,9 +492,9 @@ server.registerTool(
   "schedule_task",
   {
     description: "Agenda una tarea existente como evento de Calendar y guarda la referencia cruzada en la tarea.",
-    inputSchema: { taskId: z.string(), project, taskListId, start: z.string(), end: z.string().optional(), durationMinutes: z.number().int().min(5).max(480).optional(), calendarId: z.string().optional(), notes: z.string().optional(), color: z.string().optional().describe(`Color del evento. ${EVENT_COLOR_HELP}`), allowConflict: z.boolean().optional().default(false).describe("Solo true después de confirmar explícitamente el conflicto.") },
+    inputSchema: { taskId: z.string(), project, taskListId, start: z.string(), end: z.string().optional(), durationMinutes: z.number().int().min(5).max(480).optional(), calendarId: z.string().optional(), notes: z.string().optional(), color: z.string().optional().describe(`Color del evento. ${EVENT_COLOR_HELP}`), recurrence: z.string().optional().describe(RECURRENCE_HELP), allowConflict: z.boolean().optional().default(false).describe("Solo true después de confirmar explícitamente el conflicto.") },
   },
-  async ({ taskId, project: projectName, taskListId: listId, start, end, durationMinutes, calendarId, notes, color, allowConflict }) => safe(async () => {
+  async ({ taskId, project: projectName, taskListId: listId, start, end, durationMinutes, calendarId, notes, color, recurrence, allowConflict }) => safe(async () => {
     const { tasks, calendar } = await getGoogleApis();
     const list = await resolveTaskList(tasks, listId, projectName);
     const taskResponse = await tasks.tasks.get({ tasklist: list.id, task: taskId });
@@ -485,6 +508,7 @@ server.registerTool(
     const conflicts = await findConflicts(calendar, id, timezone, startValue, endValue);
     if (conflicts.length && !allowConflict) return { scheduled: false, conflict: true, calendarId: id, timezone, conflicts, message: "No se agendó la tarea porque el horario se solapa con otros eventos." };
     const colorId = resolveColor(color);
+    const recurrenceRule = resolveRecurrence(recurrence);
     const response = await calendar.events.insert({
       calendarId: id,
       sendUpdates: "none",
@@ -492,6 +516,7 @@ server.registerTool(
         summary: task.title,
         description: [task.notes, notes, `Orion Flow · proyecto: ${list.title}`].filter(Boolean).join("\n\n"),
         colorId,
+        recurrence: recurrenceRule,
         start: { dateTime: startValue.toISO()!, timeZone: timezone },
         end: { dateTime: endValue.toISO()!, timeZone: timezone },
         extendedProperties: { private: { orionTaskId: task.id, orionTaskListId: list.id, orionProject: list.title ?? "" } },
