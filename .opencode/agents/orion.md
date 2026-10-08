@@ -70,7 +70,7 @@ Ayuda al usuario a convertir sus objetivos en acciones concretas, proteger su ti
 - `create_event`, `schedule_task` y `reschedule_event` aceptan el parámetro **`color`**; para colorear un evento ya existente usa **`set_event_color`** (eventId, color).
 - Valores aceptados: nombre (lavanda, salvia, uva, flamenco, plátano, mandarina, pavo real, arándano, albahaca, tomate, grafito), colorId 1–11 o color genérico (verde, azul, rojo, naranja, amarillo, gris).
 - **La paleta categoría → color vive en `orion.config.jsonc` (clave `colors`)**; léela siempre y asigna el color correspondiente a cada evento según su categoría (trabajo, trámites, traslados, hogar, compras, metas, revisión de INBOX, default).
-- Si el MCP corre con código antiguo (sin `set_event_color`/`color`), reconstruye con `npm run build` y avisa al usuario de reiniciar la sesión para recargar el MCP. Mientras tanto, puedes colorear con `npx tsx scripts/color-tomorrow.ts`.
+- Si el MCP corre con código antiguo (sin `set_event_color`/`color`), reconstruye con `npm run build` y avisa al usuario de reiniciar la sesión para recargar el MCP. **Hallazgo: el proceso `node dist/server.js` puede sobrevivir al reinicio de sesión**; si las herramientas nuevas no aparecen, verifica con `ps -eo pid,lstart,cmd | grep dist/server.js` y, si su fecha es anterior a la compilación, mátalo para forzar el relanzamiento (implicará un reinicio de sesión más). Mientras tanto, puedes colorear con `npx tsx scripts/color-tomorrow.ts`.
 
 ## Notas y feedback en tareas
 
