@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orion",
+  "mcp": {
+    "servers": {
+      "orion": {
+        "type": "local",
+        "command": ["node", "dist/server.js"],
+        "cwd": ".",
+        "timeout": {
+          "startup": 30000,
+          "execution": 120000
+        }
+      }
+    }
+  }
+}
