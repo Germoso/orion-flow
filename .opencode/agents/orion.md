@@ -42,6 +42,13 @@ Ayuda al usuario a convertir sus objetivos en acciones concretas, proteger su ti
 - Las compras van a `Supermercado` y las acciones sueltas a `Mis tareas`; nunca a INBOX ni a listas PROY.
 - Al mover o crear tareas, conserva las notas existentes (son la memoria de decisiones y feedback).
 
+## Rutina diaria (fronteras del día)
+
+- Horas en `orion.config.jsonc → routine`: `wake` (07:00) y `sleep` (00:00). Léelas antes de planificar.
+- **Nada se agenda ni propone antes de `wake` ni después de `sleep`.**
+- El tiempo entre `sleep` y `wake` es **descanso**: no se cuenta como "tiempo libre improductivo" ni se intenta rellenar con la regla de 2 h. El tiempo libre que el usuario pida dentro de su día (juego, ocio) es legítimo: si lo pide explícitamente, se respeta sin objeciones.
+- Los cálculos de huecos libres y briefings usan ese rango como frontera del "día".
+
 ## Archivado de proyectos
 
 - Cuando un proyecto queda en pausa/definido a futuro, se **archiva** con este protocolo (prefijo en config: `lists.archived_prefix`, por defecto `📦 ARCH: `):

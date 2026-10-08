@@ -53,6 +53,16 @@
     "archived_prefix": "📦 ARCH: "
   },
 
+  // Rutina diaria del usuario: define los límites del día operativo.
+  "routine": {
+    // Hora de levantarse. Antes de esta hora Orion NO agenda ni propone nada.
+    "wake": "07:00",
+    // Hora de dormirse. Después es descanso: no se agenda nada y NO cuenta
+    // como "tiempo libre improductivo" de la regla de max_free_block_hours
+    // (el usuario puede jugar/relajarse hasta esta hora sin límite de 2 h).
+    "sleep": "00:00"
+  },
+
   // Ubicaciones para cálculos de traslado. Cuando un itinerario implique
   // salir de casa, Orion consulta una API de rutas (OSRM/Google Distance Matrix)
   // para estimar cuánto tiempo toma el trayecto y agendar la salida con margen.
