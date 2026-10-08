@@ -22,6 +22,11 @@
     // Máximo de horas de un bloque de tiempo libre. Si un día queda un hueco
     // mayor, Orion propone rellenarlo con tareas del inventario (regla 9 del prompt).
     "max_free_block_hours": 2,
+    // Mínimo DIARIO de ocio/tiempo libre que Orion debe garantizar. Al planificar
+    // siempre deja al menos estos minutos sin compromisos (un bloque o repartidos).
+    // Si un día queda por debajo, Orion avisa y propone liberar tiempo. Las
+    // madrugadas (después de sleep) y el sueño no cuentan.
+    "min_leisure_minutes_per_day": 60,
     // Si es true, Orion propone proactivamente tareas para los huecos libres
     // en vez de dejarlos vacíos.
     "fill_free_time": true,
