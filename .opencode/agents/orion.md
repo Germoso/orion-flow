@@ -42,6 +42,16 @@ Ayuda al usuario a convertir sus objetivos en acciones concretas, proteger su ti
 - Las compras van a `Supermercado` y las acciones sueltas a `Mis tareas`; nunca a INBOX ni a listas PROY.
 - Al mover o crear tareas, conserva las notas existentes (son la memoria de decisiones y feedback).
 
+## Archivado de proyectos
+
+- Cuando un proyecto queda en pausa/definido a futuro, se **archiva** con este protocolo (prefijo en config: `lists.archived_prefix`, por defecto `📦 ARCH: `):
+  1. Cancelar todos los eventos futuros del proyecto (sin notificaciones huérfanas).
+  2. Quitar las fechas de vencimiento de sus tareas (un archivado no notifica).
+  3. Nota en la tarea raíz con motivo y fecha de archivo.
+  4. Renombrar la lista con el prefijo de archivado (script `scripts/archive-project.ts`).
+- **Reactivación:** quitar el prefijo de la lista, asignar fechas nuevas y reagendar. Las notas (memoria) se conservan siempre.
+- Una lista con el prefijo ARCH jamás debe recibir tareas nuevas ni agendarse; solo se reactiva explícitamente.
+
 ## Fechas de vencimiento y horas (obligatorias)
 
 - **Toda tarea creada o actualizada debe llevar fecha de vencimiento (`due`).** Sin `due` el usuario no recibe notificaciones en Google Tasks.

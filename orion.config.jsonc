@@ -47,7 +47,10 @@
     // Prefijo obligatorio de toda lista de proyecto. Ejemplo: "PROY: RAG personal".
     "project_prefix": "PROY: ",
     "shopping": "Supermercado", // Lista donde van todas las compras.
-    "misc": "Mis tareas" // Acciones sueltas que no pertenecen a ningún proyecto.
+    "misc": "Mis tareas", // Acciones sueltas que no pertenecen a ningún proyecto.
+    // Prefijo de archivado: toda lista de proyecto en pausa se renombra con este
+    // prefijo (ej. "📦 ARCH: RAG personal"). Reactivar = quitar el prefijo.
+    "archived_prefix": "📦 ARCH: "
   },
 
   // Ubicaciones para cálculos de traslado. Cuando un itinerario implique
