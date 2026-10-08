@@ -1,0 +1,89 @@
+{
+  // Configuración de Orion Flow.
+  // Fuente de verdad de TODOS los valores configurables del sistema:
+  // el agente lee este archivo antes de usar cualquier variable y el system
+  // prompt no duplica estos valores. Edítalo a mano o pídele a Orion que
+  // cambie un valor: él lo modifica aquí (formato JSONC, admite comentarios //).
+
+  // Zona horaria en la que Orion interpreta y muestra todas las fechas y
+  // horas de agenda (America/Santo_Domingo = GMT-04:00).
+  "timezone": "America/Santo_Domingo",
+
+  // Horario laboral que Orion usa al buscar huecos libres
+  // (orion_find_available_slots) y al planificar bloques de trabajo.
+  "workday": {
+    "start": "09:00", // Hora de inicio del horario laboral.
+    "end": "18:00", // Hora de fin del horario laboral.
+    "buffer_minutes": 15 // Minutos de margen alrededor de cada compromiso para no llenar el día al 100%.
+  },
+
+  // Reglas de productividad: Orion debe maximizar el aprovechamiento del tiempo.
+  "productivity": {
+    // Máximo de horas de un bloque de tiempo libre. Si un día queda un hueco
+    // mayor, Orion propone rellenarlo con tareas del inventario (regla 9 del prompt).
+    "max_free_block_hours": 2,
+    // Si es true, Orion propone proactivamente tareas para los huecos libres
+    // en vez de dejarlos vacíos.
+    "fill_free_time": true,
+    // Duración máxima (minutos) de una sesión de trabajo sobre una tarea
+    // compleja; las tareas grandes se dividen en varias sesiones.
+    "session_max_minutes": 120,
+    // Minutos mínimos de descanso/separación entre dos bloques consecutivos.
+    "min_margin_between_blocks_minutes": 15
+  },
+
+  // Preferencias de notificación. Google Tasks avisa solo por fecha de
+  // vencimiento; los recordatorios con hora real son eventos de Calendar.
+  "notifications": {
+    // Minutos antes del evento en los que quieres recibir el recordatorio
+    // (ajuste que se aplica en la app de Google Calendar).
+    "calendar_reminder_minutes_before": 30
+  },
+
+  // Nombres exactos de las listas de Google Tasks que Orion usa en su
+  // metodología. Cambia aquí si renombras una lista en Google Tasks.
+  "lists": {
+    "inbox": "INBOX", // Bandeja de entrada: items aún no definidos (ideas, links, pendientes sin alcance).
+    // Prefijo obligatorio de toda lista de proyecto. Ejemplo: "PROY: RAG personal".
+    "project_prefix": "PROY: ",
+    "shopping": "Supermercado", // Lista donde van todas las compras.
+    "misc": "Mis tareas" // Acciones sueltas que no pertenecen a ningún proyecto.
+  },
+
+  // Revisión semanal de la bandeja INBOX: cuándo agenda Orion el momento de
+  // decidir el destino de sus items (proyecto, tarea o descartar).
+  "inbox_review": {
+    "weekday": "saturday", // Día de la semana (mon..sunday, en inglés).
+    "time": "10:00" // Hora local de la revisión.
+  },
+
+  // Reglas de agendado en Google Calendar.
+  "agenda": {
+    // Si es true, Orion SOLO crea eventos de Calendar para el día siguiente
+    // (mañana); cualquier otra fecha se anota en la tarea pero no se agenda.
+    "only_schedule_next_day": true
+  },
+
+  // Paleta de colores de Google Calendar: mapea categoría de evento → color.
+  // Nombres aceptados: lavanda, salvia, uva, flamenco, plátano, mandarina,
+  // pavo real, arándano, albahaca, tomate, grafito; o colorId 1–11; o
+  // genérico: verde, azul, rojo, naranja, amarillo, gris. Orion lo aplica al
+  // crear cada evento (parámetro color / herramienta set_event_color).
+  "colors": {
+    "trabajo": "pavo real", // Jornada, 2nd Job, bloques laborales.
+    "tramites_urgentes": "tomate", // Pagar servicios, cancelaciones, papeles.
+    "traslados": "mandarina", // Salidas de casa y desplazamientos.
+    "hogar": "albahaca", // Limpieza, orden, mantenimiento del domicilio.
+    "compras": "plátano", // Salidas o sesiones de compras.
+    "metas_y_proyectos": "uva", // Bloques de trabajo en proyectos y metas (listas PROY).
+    "revision_inbox": "salvia", // Revisiones de la bandeja INBOX.
+    "default": "lavanda" // Color por defecto si el evento no encaja en ninguna categoría.
+  },
+
+  // Comportamiento de Orion con el repositorio de Git/GitHub del proyecto.
+  "git": {
+    // Si es true, Orion sube a GitHub (git add + commit + push) cada feature
+    // o cambio del sistema sin esperar a que se lo pidan.
+    "auto_push_after_change": true
+  }
+}
