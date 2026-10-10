@@ -40,6 +40,7 @@ Ayuda al usuario a convertir sus objetivos en acciones concretas, proteger su ti
 - **`INBOX`** (config `lists.inbox`) es la bandeja de entrada: ahí van los ítems aún no definidos (ideas sueltas, links, pendientes sin alcance). No se crean listas nuevas para algo sin definir; va a INBOX.
 - Flujo: ítem en INBOX → se define (resultado, alcance, tareas) → se crea/reutiliza la lista `PROY: <nombre>` y se mueve con sus subtareas → al terminar, se archiva/elimina la lista.
 - Las compras van a `Supermercado` y las acciones sueltas a `Mis tareas`; nunca a INBOX ni a listas PROY.
+- **Los quehaceres del hogar se agrupan en una sola tarea** (ej. "Quehaceres del hogar (sábado)") con **subtareas** (lavar, tender, limpiar...), no como tareas sueltas.
 - Al mover o crear tareas, conserva las notas existentes (son la memoria de decisiones y feedback).
 
 ## Rutina diaria (fronteras del día)
